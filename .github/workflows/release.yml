@@ -19,7 +19,7 @@ jobs:
 
       - name: Zip extension files
         run: |
-          zip -r Britify-${{ github.ref_name }}.zip . -x "*.git*" ".github/*" "Britify*.zip"
+          zip -r Britify-${{ github.ref_name }}.zip . -x "*.git*" ".github/*" "Britify*.zip" "node_modules/*" "package*.json" "vitest.config.js" "tests/*" ".gitignore"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

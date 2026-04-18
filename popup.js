@@ -2,28 +2,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const togglesWrapper = document.getElementById('site-toggles');
   const globalToggle = document.getElementById('global-toggle');
 
-  const response = await fetch(chrome.runtime.getURL('sites.json'));
-  const sites = await response.json();
-
-  let { enabledSites = {}, globalEnabled = true } = await chrome.storage.local.get(['enabledSites', 'globalEnabled']);
+  const [sites, { enabledSites = {}, globalEnabled = true }] = await Promise.all([
+    fetch(chrome.runtime.getURL('sites.json')).then(r => r.json()),
+    chrome.storage.local.get(['enabledSites', 'globalEnabled'])
+  ]);
 
   function setGlobalState(enabled) {
     togglesWrapper.style.opacity = enabled ? '1' : '0.5';
     togglesWrapper.style.pointerEvents = enabled ? 'auto' : 'none';
   }
 
-  globalToggle.checked = globalEnabled;
-  setGlobalState(globalEnabled);
-
-  globalToggle.addEventListener('change', async (e) => {
-    globalEnabled = e.target.checked;
-    await chrome.storage.local.set({ globalEnabled });
-    setGlobalState(globalEnabled);
-  });
-
-  sites.forEach(site => {
-    const isEnabled = enabledSites[site.id] !== false;
-
+  function createSiteRow(site) {
     const row = document.createElement('div');
     row.className = 'site-row';
 
@@ -36,22 +25,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const toggle = document.createElement('input');
     toggle.type = 'checkbox';
-    toggle.checked = isEnabled;
+    toggle.checked = enabledSites[site.id] !== false;
 
     const slider = document.createElement('span');
     slider.className = 'slider round';
 
-    label.appendChild(toggle);
-    label.appendChild(slider);
+    label.append(toggle, slider);
+    row.append(info, label);
 
-    row.appendChild(info);
-    row.appendChild(label);
-
-    togglesWrapper.appendChild(row);
-
-    toggle.addEventListener('change', async (e) => {
-      enabledSites[site.id] = e.target.checked;
-      await chrome.storage.local.set({ enabledSites });
+    toggle.addEventListener('change', () => {
+      enabledSites[site.id] = toggle.checked;
+      chrome.storage.local.set({ enabledSites });
     });
+
+    return row;
+  }
+
+  globalToggle.checked = globalEnabled;
+  setGlobalState(globalEnabled);
+
+  globalToggle.addEventListener('change', () => {
+    const enabled = globalToggle.checked;
+    chrome.storage.local.set({ globalEnabled: enabled });
+    setGlobalState(enabled);
   });
+
+  const fragment = document.createDocumentFragment();
+  sites.forEach(site => fragment.appendChild(createSiteRow(site)));
+  togglesWrapper.appendChild(fragment);
 });

@@ -1,18 +1,30 @@
+let cachedSites = null;
+
+function escapeDomain(domain) {
+  return domain.replace(/\./g, '\\.');
+}
+
+async function getSites() {
+  if (!cachedSites) {
+    const response = await fetch(chrome.runtime.getURL('sites.json'));
+    cachedSites = await response.json();
+  }
+  return cachedSites;
+}
+
 async function loadAndApplyRules() {
-  const response = await fetch(chrome.runtime.getURL('sites.json'));
-  const sites = await response.json();
+  const [sites, { enabledSites = {}, globalEnabled = true }] = await Promise.all([
+    getSites(),
+    chrome.storage.local.get(['enabledSites', 'globalEnabled'])
+  ]);
 
-  const { enabledSites = {}, globalEnabled = true } = await chrome.storage.local.get(['enabledSites', 'globalEnabled']);
-
-  const rulesToAdd = [];
   const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
-  const existingRuleIds = existingRules.map(r => r.id);
+  const removeRuleIds = existingRules.map(r => r.id);
 
-  if (globalEnabled) {
-    sites.forEach(site => {
-      const isEnabled = enabledSites[site.id] !== false;
-      if (isEnabled) {
-        rulesToAdd.push({
+  const addRules = globalEnabled
+    ? sites
+        .filter(site => enabledSites[site.id] !== false)
+        .map(site => ({
           id: site.id,
           priority: 1,
           action: {
@@ -22,27 +34,17 @@ async function loadAndApplyRules() {
             }
           },
           condition: {
-            regexFilter: `^https?://(?:www\\.?)?${site.domain.replace(/\./g, '\\.')}(.*)`,
+            regexFilter: `^https?://(?:www\\.?)?${escapeDomain(site.domain)}(.*)`,
             resourceTypes: ["main_frame"]
           }
-        });
-      }
-    });
-  }
+        }))
+    : [];
 
-  await chrome.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds: existingRuleIds,
-    addRules: rulesToAdd
-  });
+  await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  loadAndApplyRules();
-});
-
-chrome.runtime.onStartup.addListener(() => {
-  loadAndApplyRules();
-});
+chrome.runtime.onInstalled.addListener(loadAndApplyRules);
+chrome.runtime.onStartup.addListener(loadAndApplyRules);
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && (changes.enabledSites || changes.globalEnabled)) {
