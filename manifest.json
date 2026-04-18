@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Britify",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "Automatically redirects US shopping/retail sites to their .co.uk equivalents.",
   "icons": {
     "16": "icon.png",
