@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "Britify",
+  "version": "1.0",
+  "description": "Automatically redirects US shopping/retail sites to their .co.uk equivalents.",
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "permissions": [
+    "declarativeNetRequest",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.ebay.com/*",
+    "*://*.amazon.com/*",
+    "*://*.ticketmaster.com/*",
+    "*://*.dominos.com/*",
+    "*://*.papajohns.com/*",
+    "*://*.expedia.com/*",
+    "*://*.tripadvisor.com/*",
+    "*://*.groupon.com/*",
+    "*://*.wayfair.com/*",
+    "*://*.autotrader.com/*",
+    "*://*.footlocker.com/*",
+    "*://*.yahoo.com/*",
+    "*://*.google.com/*",
+    "*://*.indeed.com/*",
+    "*://*.dell.com/*",
+    "*://*.hp.com/*",
+    "*://*.panasonic.com/*",
+    "*://*.sony.com/*",
+    "*://*.vodafone.com/*",
+    "*://*.ford.com/*",
+    "*://*.bose.com/*",
+    "*://*.aldi.com/*",
+    "*://*.timeout.com/*",
+    "*://*.vogue.com/*",
+    "*://*.wired.com/*",
+    "*://*.ign.com/*",
+    "*://*.match.com/*",
+    "*://*.eharmony.com/*",
+    "*://*.gumtree.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Britify Settings",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  }
+}
