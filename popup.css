@@ -133,3 +133,32 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1e1e1e;
+    color: #f7f7f8;
+  }
+  h1, .global-row .site-name, .site-name {
+    color: #e5e5ea;
+  }
+  p {
+    color: #aaa;
+  }
+  .global-row, .toggles-wrapper {
+    background: #2d2d2d;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .site-row {
+    border-bottom: 1px solid #444;
+  }
+  .site-domain {
+    color: #999;
+  }
+  .slider {
+    background-color: #555;
+  }
+  .toggles-wrapper::-webkit-scrollbar-thumb {
+    background: #555;
+  }
+}
