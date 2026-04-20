@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Britify",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Automatically redirects US shopping/retail sites to their .co.uk equivalents.",
   "icons": {
     "16": "icon.png",
@@ -25,23 +25,15 @@
     "*://*.autotrader.com/*",
     "*://*.footlocker.com/*",
     "*://*.yahoo.com/*",
-    "*://*.google.com/*",
     "*://*.indeed.com/*",
-    "*://*.dell.com/*",
-    "*://*.hp.com/*",
-    "*://*.panasonic.com/*",
     "*://*.sony.com/*",
     "*://*.vodafone.com/*",
     "*://*.ford.com/*",
     "*://*.bose.com/*",
     "*://*.aldi.com/*",
-    "*://*.timeout.com/*",
     "*://*.vogue.com/*",
-    "*://*.wired.com/*",
-    "*://*.ign.com/*",
     "*://*.match.com/*",
-    "*://*.eharmony.com/*",
-    "*://*.gumtree.com/*"
+    "*://*.eharmony.com/*"
   ],
   "background": {
     "service_worker": "background.js"
